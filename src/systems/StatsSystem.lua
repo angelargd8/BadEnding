@@ -16,6 +16,8 @@ function StatsSystem.update(scene, dt)
         runState.stats[stat] = runState.stats[stat] + 1
 
         runState.practice[pick.option] = (runState.practice[pick.option] or 0) + 1
+        runState.weekPractice[pick.option] =
+            (runState.weekPractice[pick.option] or 0) + 1
     end
 end
 

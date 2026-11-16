@@ -1,11 +1,13 @@
 # Bad Ending
 
 # Vídeos: 
-### UI SYSTEM: 
-[Vídeo](https://youtu.be/2agKx_-WqXQ)
+[Vídeo Progression-Cycle](https://youtu.be/Ct-qHc0fFi8)
 
 
-Historia interactiva en Lua y LÖVE 11.5. Durante las doce semanas antes de
+[Vídeo UI SYSTEM](https://youtu.be/2agKx_-WqXQ)
+
+
+Historia interactiva en Lua y LÖVE 11.5. Durante las seis semanas antes de
 graduarse, un estudiante introvertido de tercer año intenta terminar con
 honestidad una relación con una alumna extrovertida de primer año, quien está
 enamorada de una versión idealizada de él. Las actividades semanales influyen
@@ -24,9 +26,47 @@ izquierdo para pasar cada frase; al terminar, se abre la semana de actividades. 
 las flechas izquierda y derecha para seleccionar una actividad y Enter o
 Espacio para elegirla. Cada elección actualiza el estado, muestra una viñeta
 y avanza el día. Durante la viñeta, Enter termina de escribir el texto al
-instante.
+instante. Pulsa C en cualquier escena para abrir la colección y C otra vez
+para volver exactamente a la escena anterior.
 
-## Sistemas de interfaz
+## Progression-Cycle
+
+La partida conecta la preparación semanal con el mazo de respuestas:
+
+1. De lunes a viernes, el jugador elige una actividad. Cada elección modifica
+   las estadísticas acumuladas y registra la práctica de esa semana.
+2. Al terminar el viernes, la fecha pasa a sábado por la mañana y se abre un
+   sobre con cinco cartas generadas a partir de las estadísticas acumuladas y
+   la práctica de la semana actual.
+3. Las cinco cartas se agregan una sola vez al `runState.collection`. El mazo
+   acumula las cartas de las semanas anteriores y las conserva hasta que se
+   utilicen en una conversación.
+4. C abre la colección desde cualquier escena. Se muestran hasta diez cartas
+   por página, en dos filas de cinco; cada carta lleva en su parte superior un
+   icono que indica si favorece la obsesión, el odio o la amistad. Las flechas
+   permiten recorrer las páginas del mazo. C cierra la colección y reanuda la
+   escena pausada, sin avanzar el día ni repetir una actividad.
+5. En la apertura del sábado, Enter o Espacio comienza la semana siguiente y
+   reinicia el contador de práctica semanal. Al terminar el sobre de la sexta
+   semana, el ciclo concluye y no se inicia una séptima semana.
+
+Cada actividad suma 1 a una estadística acumulada: estudiar → `int`; comunicación
+y carisma → `charm`; pasatiempos e inteligencia emocional → `sense`. Esos valores
+inclinan qué habilidad será principal y los números de cada carta. La práctica
+de la semana inclina el resultado: estudiar y pasatiempos favorecen obsesión;
+comunicación e inteligencia emocional reducen el odio (5 puntos porcentuales
+por práctica, mínimo 10 %) y favorecen amistad; carisma aumenta la obsesión y
+la posibilidad de una frase bonita (10 puntos por práctica, máximo 75 %). Si se
+practicó inteligencia emocional esa semana, cada carta tiene 85 % de probabilidad
+de ser de amistad.
+
+Sí, se usa aleatoriedad: cada sobre recibe una semilla aleatoria y se hacen
+sorteos para la habilidad principal, los valores, el resultado y la frase. Las
+estadísticas inclinan las probabilidades, pero no garantizan una carta concreta.
+Los datos de partida y la colección viven en el mismo `runState` mientras el
+juego está abierto; guardar en disco es independiente.
+
+## UI-Systems
 
 La escena semanal compone tres interfaces: el menú de actividades, el cuadro
 de texto y el HUD de semana/estadísticas. En este motor, `draw()` es la etapa
@@ -82,19 +122,14 @@ las habilidades al elegir actividades. `DateRenderSystem.draw()` y
 forma relativa de las estadísticas, no sus valores exactos.
 
 **Conexión con el juego.** El calendario sitúa el avance de la partida dentro
-del plazo de doce semanas. El radar hace visible el efecto de las actividades
+del plazo de seis semanas. El radar hace visible el efecto de las actividades
 en las habilidades del protagonista.
 
 ## Estado del prototipo
 
-`main.lua` inicia `WeekScene`, donde las tres interfaces están registradas y
-conectadas al estado del juego. La escena semanal actualiza actividades,
-calendario y texto. El generador de cartas existe en una escena de laboratorio
-separada; la escena de conversación todavía no está implementada, así que las
-cartas ya se clasifican como obsesión, odio o amistad, pero aún no modifican
-esos estados al jugarse.
-
-No hay una implementación de Breakout en la partida principal. Los ejemplos de
-Pong bajo `lesson/pong/` son material didáctico independiente y no se cargan
-desde `main.lua`; las menciones a Breakout en las páginas del curso son texto
-de enseñanza, no código del juego.
+`main.lua` inicia la escena narrativa y luego la semana de actividades. El
+ciclo semanal incluye la apertura de sobre del sábado y el acceso a la
+colección. `PackLabScene` permanece como laboratorio independiente para ajustar
+la generación de cartas. La escena de conversación todavía está pendiente; las
+cartas se conservan en el mazo hasta que esa mecánica permita jugarlas y
+consumirlas.

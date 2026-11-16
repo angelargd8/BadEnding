@@ -130,7 +130,7 @@ function PackLabRenderSystem.draw(scene)
     love.graphics.setFont(smallFont)
     love.graphics.printf(lab.message, 12, 355, 616, "left")
     love.graphics.setColor(1, 1, 1, 0.48)
-    love.graphics.printf("Arrows tune stats   P new pack   R replay seed   H hand   C clear",
+    love.graphics.printf("Arrows tune stats   P new pack   R replay seed   H hand   X clear",
         12, 378, 616, "left")
     love.graphics.setColor(1, 1, 1)
 end

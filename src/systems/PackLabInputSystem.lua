@@ -17,7 +17,7 @@ function PackLabInputSystem.update(scene, dt)
             emit(registry, "packReplayRequested")
         elseif key == "h" then
             emit(registry, "handRequested")
-        elseif key == "c" then
+        elseif key == "x" then
             emit(registry, "collectionClearRequested")
         elseif key == "1" or key == "2" or key == "3" then
             emit(registry, "statPresetRequested", { preset = tonumber(key) })

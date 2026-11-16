@@ -29,6 +29,8 @@ function CollectionInputSystem.update(scene, dt)
                 event = true,
                 collectionJumpRequested = { edge = "last" },
             })
+        elseif event.key == "c" then
+            registry:spawn({ popSceneRequest = {} })
         end
     end
 end

@@ -1,8 +1,7 @@
 -- Escena semanal de Bad Ending. El protagonista elige cómo ocupar su
--- tiempo durante las doce semanas antes de graduarse.
+-- tiempo durante las seis semanas antes de graduarse.
 
 local Scene = require("src.ecs.Scene")
-local SaveFile = require("src.state.SaveFile")
 
 local MenuInputSystem = require("src.systems.MenuInputSystem")
 local StatsSystem = require("src.systems.StatsSystem")
@@ -18,45 +17,8 @@ local FadeRenderSystem = require("src.systems.FadeRenderSystem")
 return function(payload)
     local scene = Scene.new("week")
 
-    -- RUN state: the one table every scene of the game reads and
-    -- writes (GDD §10) — and the thing the save file persists. Loaded
-    -- fresh from disk every time the scene is built; defaults are what
-    -- week 1, Monday morning looks like. (Saving it back is the recap
-    -- lesson's job.)
-    local data = SaveFile.load()
-    local runState = data and data.runState
-    if runState then
-        runState.practice = runState.practice or {
-            study = 0, hobbies = 0, communication = 0,
-            emotional_intelligence = 0, charisma = 0,
-        }
-        for _, key in ipairs({ "study", "hobbies", "communication",
-            "emotional_intelligence", "charisma" }) do
-            runState.practice[key] = runState.practice[key] or 0
-        end
-        -- Compatibilidad con partidas creadas antes de añadir los tres
-        -- estados de relación definidos en el GDD.
-        runState.relationship = runState.relationship or {
-            obsession = 0, hate = 0, friendshipness = 0,
-        }
-    end
-    scene.registry:setResource("runState",
-        runState or {
-            week = 1,
-            day = 1, -- 1..5, Mon-Fri
-            -- La base no nula permite generar cartas con pesos definidos.
-            stats = { int = 1, charm = 1, sense = 1 },
-            practice = {
-                study = 0, hobbies = 0, communication = 0,
-                emotional_intelligence = 0, charisma = 0,
-            },
-            relationship = { obsession = 0, hate = 0, friendshipness = 0 },
-            collection = {},
-        })
-
-    -- SCENE state, by contrast: the day loop's phase machine lives and
-    -- dies with the scene and is never saved. Compare with runState
-    -- above — that split is the whole lesson-05 distinction, in code.
+    -- The runState is injected by Game and survives scene changes. The
+    -- day-loop phase is local to this scene and starts fresh on each visit.
     scene.registry:setResource("dayloop", {
         phase = "choosing", -- choosing -> vignette -> fade -> choosing
         timer = 0,

@@ -5,6 +5,9 @@ local attachDebugOverlay = require("src.debug.attach")
 function love.load(args)
     Game.registerScene("opening", require("src.scenes.OpeningScene"))
     Game.registerScene("week", require("src.scenes.WeekScene"))
+    Game.registerScene("packLab", require("src.scenes.PackLabScene"))
+    Game.registerScene("collection", require("src.scenes.CollectionScene"))
+    Game.registerScene("packOpening", require("src.scenes.PackOpeningScene"))
 
     Game.start("opening")
 

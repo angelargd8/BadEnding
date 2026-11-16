@@ -20,7 +20,8 @@ DayLoopSystem.FADE_TIME = 1.6 -- out over the first half, in over the second
 local FADE_TIME = DayLoopSystem.FADE_TIME
 
 local PROMPT = "¿Qué harás hoy?"
-local DAYS_PER_WEEK = 5 -- Mon-Fri; Saturday hands off to the pack scene (later)
+local DAYS_PER_WEEK = 5 -- Mon-Fri; Saturday morning opens a card pack
+local SATURDAY = DAYS_PER_WEEK + 1
 
 function DayLoopSystem.update(scene, dt)
     local day = scene.registry:resource("dayloop")
@@ -41,17 +42,25 @@ function DayLoopSystem.update(scene, dt)
         if not day.flipped and day.timer >= FADE_TIME / 2 then
             day.flipped = true -- the screen is black: change the world
             local runState = scene.registry:resource("runState")
-            runState.day = runState.day + 1
-            if runState.day > DAYS_PER_WEEK then
-                runState.day = 1 -- Saturday goes here, once it exists
-                runState.week = runState.week + 1
+            if runState.day >= DAYS_PER_WEEK then
+                -- Keep the week and its completed stats until the Saturday
+                -- pack has been opened and acknowledged.
+                runState.day = SATURDAY
+            else
+                runState.day = runState.day + 1
+                local _, textbox = scene.registry:first("textbox")
+                textbox.text = PROMPT
+                textbox.visibleChars = 0
             end
-            local _, textbox = scene.registry:first("textbox")
-            textbox.text = PROMPT
-            textbox.visibleChars = 0
         end
         if day.timer >= FADE_TIME then
-            day.phase, day.timer, day.flipped = "choosing", 0, false
+            if scene.registry:resource("runState").day == SATURDAY then
+                scene.registry:spawn({
+                    switchRequest = { to = "packOpening" },
+                })
+            else
+                day.phase, day.timer, day.flipped = "choosing", 0, false
+            end
         end
     end
 end

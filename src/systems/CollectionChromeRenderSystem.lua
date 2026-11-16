@@ -49,7 +49,7 @@ function CollectionChromeRenderSystem.draw(scene)
     love.graphics.setColor(COLORS.faint)
     love.graphics.printf(("PÁGINA %d / %d"):format(view.page, pageCount),
         476, 371, 150, "right")
-    love.graphics.print("FLECHAS recorrer    INICIO / FIN saltar", 244, 371)
+    love.graphics.print("FLECHAS recorrer · INICIO/FIN saltar · C volver", 244, 371)
     love.graphics.setColor(1, 1, 1)
 end
 

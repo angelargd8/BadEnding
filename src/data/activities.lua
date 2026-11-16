@@ -30,6 +30,7 @@ return {
             "Por un momento, no piensas en lo que ella espera de ti.",
             "Aprendes algo porque te interesa, no para impresionar a nadie.",
             "Este hobbie lo compartes con ella.",
+            "Miras películas que te recomendo Mizuki que te llamaron la atención.",
         },
     },
     emotional_intelligence = {
