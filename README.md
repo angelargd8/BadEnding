@@ -93,8 +93,3 @@ calendario y texto. El generador de cartas existe en una escena de laboratorio
 separada; la escena de conversación todavía no está implementada, así que las
 cartas ya se clasifican como obsesión, odio o amistad, pero aún no modifican
 esos estados al jugarse.
-
-No hay una implementación de Breakout en la partida principal. Los ejemplos de
-Pong bajo `lesson/pong/` son material didáctico independiente y no se cargan
-desde `main.lua`; las menciones a Breakout en las páginas del curso son texto
-de enseñanza, no código del juego.
