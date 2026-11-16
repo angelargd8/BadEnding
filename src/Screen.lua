@@ -1,0 +1,23 @@
+-- The game's logical resolution — the ONE place it is written down.
+-- conf.lua reads it to size the real window; systems read it to place,
+-- bounce, and clamp things; the editor (lesson 04.5) reads it to size
+-- the canvas the game renders into.
+--
+-- Until this lesson, systems asked `love.graphics.getWidth()` instead,
+-- and it happened to return the same 960 — a hidden assumption that the
+-- window IS the game. The editor broke it on purpose: its window is
+-- 1440 wide while the game stays 960. The window belongs to the
+-- platform; the RESOLUTION belongs to the game. (Unity draws the same
+-- line: `Screen.width` in game code reports the game's resolution, not
+-- the editor window's.)
+--
+-- El lienzo lógico se mantiene en 640×400 para el arte pixelado del juego
+-- (ver la sección de presentación del GDD). Los sistemas solo usan estas
+-- coordenadas, sin depender del tamaño de la ventana.
+--
+-- scale: the integer window multiplier. The plain game still opens 1:1,
+-- but the --debug editor viewport upscales its canvas by this so the game
+-- is big enough to read on a stream. Changing it touches no pixel math.
+-- display: which monitor to open on (1 = primary). 2 here = the screen
+-- captured for the online class.
+return { w = 640, h = 400, scale = 2, display = 2 }
