@@ -12,9 +12,12 @@
 -- are how real engines avoid that whole class of crashes.
 
 local Game = {}
+local RunState = require("src.state.RunState")
 
 local factories = {} -- scene name -> function(payload) -> Scene
 local current = nil
+local runState = nil
+local sceneStack = {}
 
 -- Scenes register a factory, not an instance: every entry builds the
 -- scene fresh, so no stale state can survive a visit.
@@ -24,14 +27,41 @@ end
 
 local function performSwitch(name, payload)
     assert(factories[name], "unknown scene: " .. tostring(name))
+    -- A normal transition replaces the active flow, so discard any modal
+    -- collection scenes suspended by the shortcut.
+    for i = #sceneStack, 1, -1 do
+        sceneStack[i]:unload()
+        sceneStack[i] = nil
+    end
     if current then
         current:unload()
     end
     current = factories[name](payload)
+    current.registry:setResource("runState", runState)
     current:setup()
 end
 
+local function pushScene(name, payload)
+    assert(factories[name], "unknown scene: " .. tostring(name))
+    sceneStack[#sceneStack + 1] = current
+    current = factories[name](payload)
+    current.registry:setResource("runState", runState)
+    current:setup()
+end
+
+local function popScene()
+    if #sceneStack == 0 then return false end
+    current:unload()
+    current = table.remove(sceneStack)
+    return true
+end
+
 function Game.start(name)
+    -- Load or create the plain-data state once. Every scene receives this
+    -- same table, so switching scenes cannot reset progress or collection.
+    if not runState then
+        runState = RunState.load()
+    end
     performSwitch(name, nil)
 end
 
@@ -45,6 +75,22 @@ function Game.update(dt)
     -- push, readers poll, the runtime clears.)
     for _, entity in ipairs(current.registry:query("event")) do
         current.registry:destroy(entity)
+    end
+
+    -- Modal scene requests are handled after the update, just like a normal
+    -- scene switch. The suspended scene remains alive and resumes unchanged.
+    local popEntity = current.registry:first("popSceneRequest")
+    if popEntity then
+        current.registry:destroy(popEntity)
+        popScene()
+        return
+    end
+
+    local pushEntity, pushRequest = current.registry:first("pushSceneRequest")
+    if pushRequest then
+        current.registry:destroy(pushEntity)
+        pushScene(pushRequest.to, pushRequest.payload)
+        return
     end
 
     -- the frame is over; now it's safe to honor a switch request
@@ -61,6 +107,14 @@ end
 function Game.keypressed(key)
     if key == "escape" then -- quitting is a Game concern, not a scene's
         love.event.quit()
+        return
+    end
+    if key == "c" and current.name ~= "collection" then
+        if not current.registry:first("pushSceneRequest") then
+            current.registry:spawn({
+                pushSceneRequest = { to = "collection" },
+            })
+        end
         return
     end
     -- everything else enters the world as DATA: a `keyPressed` event
@@ -86,6 +140,10 @@ end
 function Game.quit()
     if current then
         current:unload()
+    end
+    for i = #sceneStack, 1, -1 do
+        sceneStack[i]:unload()
+        sceneStack[i] = nil
     end
 end
 

@@ -6,7 +6,7 @@
 
 **Premisa:** es un simulador de citas al revés. El protagonista no intenta conquistar a alguien; busca que la chica deje de idealizarlo y pueda conocerlo como realmente es. Quiere terminar la relación con honestidad, sin humillarla ni arruinar la posibilidad de una amistad.
 
-Doce semanas antes de graduarse, un estudiante introvertido de tercer año se da cuenta de que su novia, una alumna extrovertida de primer año, está enamorada de una versión idealizada de él. Ella habla de esa versión con otras personas y atribuye al protagonista cualidades y acciones que no son reales. Aunque ella le cae bien, esa idealización le incomoda y la relación no es compatible con lo que ambos quieren, pero ella no se ha dado cuenta.
+Seis semanas antes de graduarse, un estudiante introvertido de tercer año se da cuenta de que su novia, una alumna extrovertida de primer año, está enamorada de una versión idealizada de él. Ella habla de esa versión con otras personas y atribuye al protagonista cualidades y acciones que no son reales. Aunque ella le cae bien, esa idealización le incomoda y la relación no es compatible con lo que ambos quieren, pero ella no se ha dado cuenta.
 
 El título **Bad Ending** juega con la expectativa del género: el desenlace deseado no es que ella se enamore más, sino que ambos puedan separarse con claridad.
 
@@ -17,7 +17,7 @@ El título **Bad Ending** juega con la expectativa del género: el desenlace des
 - **La chica:** estudiante extrovertida de primer año. No es una antagonista; está enamorada de una imagen idealizada y no se da cuenta de cuánto se aleja esa imagen de la realidad.
 
 - **Lugar:** Osaka, principalmente Ao Koukou y sus alrededores.
-- **Plazo:** las doce semanas previas a la graduación del protagonista.
+- **Plazo:** las seis semanas previas a la graduación del protagonista.
 - **Tono:** drama juvenil con humor ocasional. Las decisiones pueden ser incómodas y tener consecuencias, pero el juego no recompensa el abuso ni presenta el odio como una victoria.
 
 ## 3. Objetivo emocional
@@ -33,7 +33,7 @@ El juego reconoce que una conversación no controla por completo los sentimiento
 
 ## 4. Ciclo de juego
 
-La partida cubre doce semanas. Cada semana combina actividades personales con una oportunidad de interactuar:
+La partida cubre seis semanas. Cada semana combina actividades personales con una oportunidad de interactuar:
 
 Antes de la primera semana, una escena de apertura presenta el monólogo del protagonista. El jugador avanza cada frase con Enter o Espacio.
 
@@ -92,7 +92,7 @@ Estos estados no son una sola barra: es posible que coexistan sentimientos contr
 
 ## 8. Desenlaces
 
-La graduación ocurre al final de la semana doce. Los desenlaces se determinan por las conversaciones, los límites expresados y los tres estados de relación.
+La graduación ocurre al terminar la sexta semana. Los desenlaces se determinan por las conversaciones, los límites expresados y los tres estados de relación.
 
 - **Amistad respetuosa:** ella entiende que la imagen que tenía no era realista; ambos aceptan terminar la relación y conservar una amistad con límites claros.
 - **Separación amarga:** la relación termina, pero la evasión o las respuestas hirientes dejan resentimiento.
@@ -110,7 +110,7 @@ Los nombres y umbrales de los finales se deben validar con pruebas de juego. La 
 
 ## 10. Alcance de la primera versión
 
-1. Calendario de doce semanas y ciclo de actividades.
+1. Calendario de seis semanas y ciclo de actividades.
 2. Escena de apertura con el monólogo inicial y avance por Enter o Espacio.
 3. Cinco actividades: pasatiempos, estudio, comunicación efectiva, inteligencia emocional y carisma.
 4. Conversaciones con opciones de respuesta en forma de cartas.

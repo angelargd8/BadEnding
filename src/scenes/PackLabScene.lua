@@ -13,16 +13,6 @@ local PackLabRenderSystem = require("src.systems.PackLabRenderSystem")
 return function(payload)
     local scene = Scene.new("packLab")
 
-    scene.registry:setResource("runState", {
-        week = 1,
-        day = 1,
-        stats = { int = 1, charm = 1, sense = 1 },
-        practice = {
-            study = 0, hobbies = 0, communication = 0,
-            emotional_intelligence = 0, charisma = 0,
-        },
-        collection = {},
-    })
     scene.registry:setResource("packLab", {
         selectedStat = 1,
         nextSeed = 1001,

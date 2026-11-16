@@ -19,15 +19,16 @@ local PAGES = {
     "Que me conozca y se dé cuenta de que no somos compatibles.",
 }
 
-local font
+local font, hintFont
 
 function OpeningTextSystem.setup(scene)
     font = love.graphics.newFont(18)
+    hintFont = love.graphics.newFont(11)
     scene.registry:setResource("opening", { page = 1 })
 end
 
 function OpeningTextSystem.unload(scene)
-    font = nil
+    font, hintFont = nil, nil
 end
 
 function OpeningTextSystem.update(scene, dt)
@@ -77,6 +78,10 @@ function OpeningTextSystem.draw(scene)
     love.graphics.setColor(0.94, 0.89, 0.76, 1)
     love.graphics.setFont(font)
     love.graphics.printf(text, x, y, width, "center")
+    love.graphics.setColor(1, 1, 1, 0.58)
+    love.graphics.setFont(hintFont)
+    love.graphics.printf("C: ver colección", 0, Screen.h - 24,
+        Screen.w, "center")
     love.graphics.setColor(1, 1, 1, 1)
 end
 

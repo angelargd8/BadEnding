@@ -30,6 +30,10 @@ function DateRenderSystem.draw(scene)
     love.graphics.setFont(weekFont)
     love.graphics.printf(("semana %d"):format(runState.week),
         16, 60, 148, "left")
+
+    love.graphics.setColor(1, 1, 1, 0.72)
+    love.graphics.print("C: ver mazo", 16, 92)
+    love.graphics.setColor(1, 1, 1)
 end
 
 return DateRenderSystem
