@@ -3,7 +3,7 @@
 -- love.graphics.newImage hands back GPU-side texture memory; calling
 -- it twice for the same file means the card sits in VRAM twice and
 -- the two copies are different objects to Lua. The path is already
--- the natural key — two entities drawing "assets/lab_walk.png" mean
+-- the natural key — two entities drawing "assets/lab_walk2.png" mean
 -- the same picture — so the cache is a plain table keyed by path.
 --
 -- The same argument covers cut-up images: a SpriteSheet wraps one

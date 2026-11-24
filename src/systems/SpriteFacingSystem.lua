@@ -14,12 +14,6 @@
 -- SpriteAnimationSystem's job. The split is the lesson — MOVEMENT says
 -- where, FACING says which way, ANIMATION says which foot is down.
 --
--- The placeholder world-wrap also lives here, not in MovementSystem,
--- because it needs the drawn footprint (sprite.w * scale) to let the
--- sprite fully clear an edge before popping back. It becomes real
--- COLLISION (its own system) in lesson 15.
-
-local Screen = require("src.Screen")
 local Movement = require("src.world.Movement")
 
 local SpriteFacingSystem = { name = "spriteFacing" }
@@ -40,14 +34,6 @@ function SpriteFacingSystem.update(scene, dt)
 
         -- The one word we hand the animator: run, or idle.
         anim.playing = moving
-
-        -- Placeholder wrap. A cell is the drawn footprint, so the sprite
-        -- fully clears one edge before it pops back on the other.
-        local cell = sprite.w * (sprite.scale or 1)
-        if pos.x > Screen.w then pos.x = -cell end
-        if pos.x < -cell then pos.x = Screen.w end
-        if pos.y > Screen.h then pos.y = -cell end
-        if pos.y < -cell then pos.y = Screen.h end
     end
 end
 

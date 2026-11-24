@@ -2,15 +2,16 @@
 -- decides WHICH cards go WHERE; this module only turns one card into pixels.
 
 local CardArt = require("src.cards.CardArt")
+local palette = require("src.data.menu_palette")
 
 local CardRenderer = {}
 
 local COLORS = {
-    border = { 0.075, 0.080, 0.115 },
-    paper = { 0.955, 0.915, 0.805 },
-    int = { 0.15, 0.43, 0.84 },
-    charm = { 0.86, 0.19, 0.29 },
-    sense = { 0.14, 0.61, 0.34 },
+    border = palette.black,
+    paper = palette.beige,
+    int = palette.beige,
+    charm = palette.rose,
+    sense = palette.red,
 }
 
 local function randomFor(card)

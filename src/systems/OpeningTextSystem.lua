@@ -2,6 +2,7 @@
 -- to the next page; the last page requests the weekly activity scene.
 
 local Screen = require("src.Screen")
+local colors = require("src.data.menu_palette")
 
 local OpeningTextSystem = { name = "openingText" }
 
@@ -24,7 +25,9 @@ local font, hintFont
 function OpeningTextSystem.setup(scene)
     font = love.graphics.newFont(18)
     hintFont = love.graphics.newFont(11)
-    scene.registry:setResource("opening", { page = 1 })
+    if not scene.registry:resource("opening") then
+        scene.registry:setResource("opening", { page = 1 })
+    end
 end
 
 function OpeningTextSystem.unload(scene)
@@ -66,7 +69,7 @@ function OpeningTextSystem.draw(scene)
     local page = scene.registry:resource("opening").page
     local text = PAGES[page]
 
-    love.graphics.clear(0.055, 0.065, 0.105, 1)
+    love.graphics.clear(colors.beige)
     if not text then return end
 
     local width = Screen.w - 96
@@ -75,10 +78,10 @@ function OpeningTextSystem.draw(scene)
     local x = (Screen.w - width) / 2
     local y = (Screen.h - height) / 2
 
-    love.graphics.setColor(0.94, 0.89, 0.76, 1)
+    love.graphics.setColor(colors.black)
     love.graphics.setFont(font)
     love.graphics.printf(text, x, y, width, "center")
-    love.graphics.setColor(1, 1, 1, 0.58)
+    love.graphics.setColor(colors.red)
     love.graphics.setFont(hintFont)
     love.graphics.printf("C: ver colección", 0, Screen.h - 24,
         Screen.w, "center")

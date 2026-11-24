@@ -22,7 +22,7 @@ local SaveFile = {
 
 function SaveFile.save(data)
     data.version = SaveFile.VERSION
-    love.filesystem.write(SaveFile.FILENAME, serialize.encode(data))
+    return love.filesystem.write(SaveFile.FILENAME, serialize.encode(data))
 end
 
 -- Returns the saved table, or nil when there is no usable save — first

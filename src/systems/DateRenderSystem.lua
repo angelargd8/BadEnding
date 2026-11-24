@@ -5,6 +5,7 @@
 -- date is simply what this system finds the next time it looks.
 
 local DateRenderSystem = { name = "dateRender" }
+local palette = require("src.data.menu_palette")
 
 local DAY_NAMES = { "LUN", "MAR", "MIÉ", "JUE", "VIE" }
 
@@ -31,9 +32,9 @@ function DateRenderSystem.draw(scene)
     love.graphics.printf(("semana %d"):format(runState.week),
         16, 60, 148, "left")
 
-    love.graphics.setColor(1, 1, 1, 0.72)
-    love.graphics.print("C: ver mazo", 16, 92)
-    love.graphics.setColor(1, 1, 1)
+    love.graphics.setColor(palette.black)
+    love.graphics.print("C: mazo  |  M: mapa", 16, 92)
+    love.graphics.setColor(palette.black)
 end
 
 return DateRenderSystem

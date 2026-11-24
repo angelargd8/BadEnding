@@ -1,31 +1,24 @@
--- Draws the stat triangle, left column above the text box: a tiny
--- radar chart of the three hidden stats against an arbitrary DISPLAY
--- ceiling. The exact numbers stay hidden (GDD §5) — the player sees
--- their SHAPE (Int-heavy, Sense lagging) and, because the ceiling is
--- fixed, the shape visibly FILLS toward the rim as they practice.
--- The rim itself is representation, not rules: nothing in the game
--- reads DISPLAY_MAX, and stats keep counting past it happily (the
--- corner just pins at the rim).
---
--- Pure presentation over RunState, like the date: StatsSystem bumps a
--- number, and the shape is simply different the next time this looks.
+-- Shows study, happiness and emotional intelligence on the weekly radar.
 
 local RadarRenderSystem = { name = "radarRender" }
+local palette = require("src.data.menu_palette")
 
 local CX, CY = 76, 250 -- center: left column, riding above the text box
 local R = 44 -- radius to a corner, px
 
--- the display ceiling: a corner touches the rim at 30 picks of the
--- same activity — half the run's 60 picks, a heavy specialization.
--- Purely a feel number; tune it live in the inspector-less way, here.
+-- Scores keep accumulating after the displayed axis reaches the rim.
 local DISPLAY_MAX = 30
 
--- one axis per stat, corners of an equilateral triangle: int on top,
--- charm lower-left, sense lower-right. Angles in radians, -90° is up.
 local AXES = {
-    { stat = "int",   label = "E", angle = -math.pi / 2 },
-    { stat = "charm", label = "C", angle = math.pi - math.pi / 6 },
-    { stat = "sense", label = "IE", angle = math.pi / 6 },
+    { source = "stats", key = "int", label = "E", angle = -math.pi / 2 },
+    { source = "practice", key = "hobbies", label = "Felicidad", angle = 5 * math.pi / 6 },
+    { source = "stats", key = "sense", label = "IE", angle = math.pi / 6 },
+}
+
+-- A small five-point outline also works with fonts that have no star glyph.
+local HAPPINESS_STAR = {
+    0, -5,  1.5, -1.5,  5, -1.5,  2.5, 1,  3, 4.5,
+    0, 2.5,  -3, 4.5,  -2.5, 1,  -5, -1.5,  -1.5, -1.5,
 }
 
 local labelFont
@@ -46,49 +39,55 @@ local function point(axis, fraction)
 end
 
 function RadarRenderSystem.draw(scene)
-    local stats = scene.registry:resource("runState").stats
+    local runState = scene.registry:resource("runState")
+    local frame, shape = {}, {}
+    local activeAxes, tipX, tipY = 0, CX, CY
 
-
-    -- the frame: full-size triangle plus a spoke per axis, both dim
-    love.graphics.setColor(1, 1, 1, 0.25)
-    local frame = {}
+    love.graphics.setColor(0, 0, 0, 0.35)
     for _, axis in ipairs(AXES) do
         local x, y = point(axis, 1)
         frame[#frame + 1] = x
         frame[#frame + 1] = y
         love.graphics.line(CX, CY, x, y)
+
+        local source = runState[axis.source]
+        local score = math.max(0, source and source[axis.key] or 0)
+        x, y = point(axis, math.min(score / DISPLAY_MAX, 1))
+        shape[#shape + 1] = x
+        shape[#shape + 1] = y
+        if score > 0 then
+            activeAxes = activeAxes + 1
+            tipX, tipY = x, y
+        end
     end
     love.graphics.polygon("line", frame)
 
-    -- the shape: each corner at its stat's share of the ceiling,
-    -- pinned to the rim once it's past. Skipped while everything is
-    -- zero — all three corners would sit on the center, and a
-    -- zero-area polygon is not a polygon (the generator also rejects that
-    -- invalid debug state; ordinary runs begin at 1/1/1)
-    if stats.int + stats.charm + stats.sense > 0 then
-        local shape = {}
-        for _, axis in ipairs(AXES) do
-            local x, y = point(axis,
-                math.min(stats[axis.stat] / DISPLAY_MAX, 1))
-            shape[#shape + 1] = x
-            shape[#shape + 1] = y
-        end
-        love.graphics.setColor(0.55, 0.75, 1.0, 0.4)
+    if activeAxes >= 2 then
+        love.graphics.setColor(0.70, 0.22, 0.31, 0.22)
         love.graphics.polygon("fill", shape)
-        love.graphics.setColor(0.55, 0.75, 1.0, 0.9)
+        love.graphics.setColor(palette.red)
         love.graphics.polygon("line", shape)
+    elseif activeAxes == 1 then
+        love.graphics.setColor(palette.red)
+        love.graphics.line(CX, CY, tipX, tipY)
     end
 
-    -- axis letters, just past each corner
-    love.graphics.setColor(1, 1, 1, 0.7)
+    love.graphics.setColor(palette.black)
     love.graphics.setFont(labelFont)
     for _, axis in ipairs(AXES) do
         local x, y = point(axis, 1.25)
-        love.graphics.print(axis.label,
-            x - labelFont:getWidth(axis.label) / 2,
-            y - labelFont:getHeight() / 2)
+        if axis.key == "hobbies" then
+            love.graphics.push("all")
+            love.graphics.translate(x, y)
+            love.graphics.setColor(palette.rose)
+            love.graphics.polygon("line", HAPPINESS_STAR)
+            love.graphics.pop()
+            y = y + labelFont:getHeight()
+        end
+        local labelX = math.max(4, x - labelFont:getWidth(axis.label) / 2)
+        love.graphics.print(axis.label, labelX, y - labelFont:getHeight() / 2)
     end
-    love.graphics.setColor(1, 1, 1)
+    love.graphics.setColor(palette.black)
 end
 
 return RadarRenderSystem

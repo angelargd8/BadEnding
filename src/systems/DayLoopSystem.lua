@@ -24,6 +24,8 @@ local DAYS_PER_WEEK = 5 -- Mon-Fri; Saturday morning opens a card pack
 local SATURDAY = DAYS_PER_WEEK + 1
 
 function DayLoopSystem.update(scene, dt)
+    if scene.registry:first("switchRequest") then return end
+
     local day = scene.registry:resource("dayloop")
     day.timer = day.timer + dt
 

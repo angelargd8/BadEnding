@@ -6,9 +6,10 @@ local PackOpeningSystem = require("src.systems.PackOpeningSystem")
 local PackOpeningRenderSystem = require("src.systems.PackOpeningRenderSystem")
 
 return function(payload)
+    payload = payload or {}
     local scene = Scene.new("packOpening")
     scene.registry:setResource("packOpening", {
-        selected = 1,
+        selected = payload.selectedCard or 1,
         cards = {},
         ready = false,
     })

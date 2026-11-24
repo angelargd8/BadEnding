@@ -2,6 +2,7 @@
 
 local CardGenerator = require("src.generation.CardGenerator")
 local rules = require("src.data.card_rules")
+local SaveFile = require("src.state.SaveFile")
 local RunState = require("src.state.RunState")
 
 local PackOpeningSystem = { name = "packOpening" }
@@ -17,6 +18,8 @@ function PackOpeningSystem.setup(scene)
             runState.stats,
             rules.packSize,
             function(...) return rng:random(...) end,
+            runState.practice or runState.weekPractice,
+            runState.week,
             runState.weekPractice
         )
 
@@ -42,18 +45,19 @@ function PackOpeningSystem.update(scene, dt)
     local opening = registry:resource("packOpening")
 
     for _ in registry:each("packContinueRequested") do
-        if opening.ready and runState.day == 6
-                and runState.week < RunState.MAX_WEEKS then
-            runState.week = runState.week + 1
-            runState.day = 1
-            runState.weekPractice = {
-                study = 0,
-                hobbies = 0,
-                communication = 0,
-                emotional_intelligence = 0,
-                charisma = 0,
-            }
-            registry:spawn({ switchRequest = { to = "week" } })
+        if (opening.ready or opening.finished) and runState.day == 6 then
+            runState.timeOfDay = "AM"
+            SaveFile.save({
+                runState = runState,
+                scene = "homeInterior",
+                payload = { x = 288, y = 288 },
+            })
+            registry:spawn({
+                switchRequest = {
+                    to = "homeInterior",
+                    payload = { x = 288, y = 288 },
+                },
+            })
         end
     end
 end

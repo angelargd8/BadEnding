@@ -49,6 +49,27 @@ for _, name in ipairs(CardGenerator.STATS) do
             name, observed, expected))
 end
 
+local function checkResponseChances(week, sense, practice, friendship, hate, obsession)
+    local actual = CardGenerator.responseChances(sense, practice, week)
+    local expected = { friendship = friendship, hate = hate, obsession = obsession }
+    for kind, chance in pairs(expected) do
+        assert(math.abs(actual[kind] - chance) < 1e-9,
+            ("week %d, %s: expected %.4f, got %.4f"):format(
+                week, kind, chance, actual[kind]))
+    end
+end
+
+checkResponseChances(1, 1, {}, .45, .40, .15)
+checkResponseChances(3, 1, {}, .45, .40, .15)
+checkResponseChances(4, 1, {}, .14, .23, .63)
+-- The first earned IE point must help even after weekly practice resets.
+checkResponseChances(1, 2, {}, 49/104, 40/104, 15/104)
+checkResponseChances(1, 2, { emotional_intelligence = 1 }, 49/104, 40/104, 15/104)
+checkResponseChances(3, 1, { study = 5 }, 45/120, 60/120, 15/120)
+checkResponseChances(6, 1, { hobbies = 2, charisma = 3 }, 14/120, 23/120, 83/120)
+checkResponseChances(6, 1, { communication = 1 }, 18/104, 23/104, 63/104)
+checkResponseChances(6, 300, { study = 5 }, .60, .40 * 43/106, .40 * 63/106)
+
 local collection = {}
 for i = 1, 12 do collection[i] = { id = i } end
 local hand = HandGenerator.draw(collection, 5, seededRandom(96))

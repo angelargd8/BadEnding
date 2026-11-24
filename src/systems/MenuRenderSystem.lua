@@ -8,6 +8,7 @@
 
 local MenuRenderSystem = { name = "menuRender" }
 local ImageManager = require("src.graphics.ImageManager")
+local palette = require("src.data.menu_palette")
 
 local ICON = 48 -- icon side, px (small-UI 32px grid rounds up to 48 here)
 local ICON_PADDING = 6
@@ -66,6 +67,7 @@ function MenuRenderSystem.unload(scene)
 end
 
 function MenuRenderSystem.draw(scene)
+    love.graphics.clear(palette.beige)
     for _, pos, menu in scene.registry:each("position", "menu") do
         for i, option in ipairs(menu.options) do
             local x = pos.x + (i - 1) * menu.spacing
@@ -90,7 +92,7 @@ function MenuRenderSystem.draw(scene)
                     pos.y + (ICON - height) / 2,
                     0, scale, scale)
             else
-                love.graphics.setColor(0, 0, 0, 0.75)
+                love.graphics.setColor(palette.black)
                 love.graphics.setFont(labelFont)
                 love.graphics.printf(ICONS[option] or option:sub(1, 1):upper(),
                     x, pos.y + ICON / 2 - labelFont:getHeight() / 2,
@@ -101,7 +103,7 @@ function MenuRenderSystem.draw(scene)
             -- it TELEPORTS, like the genre classics; blinking is enough
             -- life for now (animation gets its own lesson).
             if selected and math.sin(love.timer.getTime() * 6) > -0.4 then
-                love.graphics.setColor(1, 1, 1)
+                love.graphics.setColor(palette.red)
                 love.graphics.rectangle("fill", x, pos.y + ICON + 6, ICON, 3)
             end
         end
@@ -109,12 +111,12 @@ function MenuRenderSystem.draw(scene)
         -- the selected option's name. This string wants to live in a
         -- real text box — that's the next lesson.
         local rowW = (#menu.options - 1) * menu.spacing + ICON
-        love.graphics.setColor(1, 1, 1)
+        love.graphics.setColor(palette.black)
         love.graphics.setFont(labelFont)
         love.graphics.printf(LABELS[menu.options[menu.cursor]] or menu.options[menu.cursor],
             pos.x, pos.y + ICON + 16, rowW, "center")
     end
-    love.graphics.setColor(1, 1, 1)
+    love.graphics.setColor(palette.black)
 end
 
 return MenuRenderSystem

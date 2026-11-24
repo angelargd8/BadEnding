@@ -2,22 +2,23 @@
 -- should communicate a card's shape at a glance; this panel answers precisely.
 
 local CardDetailRenderSystem = { name = "cardDetailRender" }
+local palette = require("src.data.menu_palette")
 
 local COLORS = {
-    cream = { 0.94, 0.89, 0.76 },
-    ink = { 0.10, 0.11, 0.16 },
-    int = { 0.20, 0.49, 0.86 },
-    charm = { 0.88, 0.29, 0.34 },
-    sense = { 0.24, 0.67, 0.42 },
-    obsession = { 0.84, 0.57, 0.84 },
-    hate = { 0.96, 0.43, 0.40 },
-    friendship = { 0.55, 0.82, 0.65 },
+    cream = palette.beige,
+    ink = palette.black,
+    int = palette.beige,
+    charm = palette.rose,
+    sense = palette.red,
+    obsession = palette.rose,
+    hate = palette.red,
+    friendship = palette.beige,
 }
 
 local LABELS = { int = "EST", charm = "COM", sense = "IE" }
 local RESPONSE_LABELS = {
     obsession = "REFUERZA LA IDEALIZACIÓN",
-    hate = "PUEDE GENERAR ODIO",
+    hate = "SUBE EL ODIO · BAJA EL ENAMORAMIENTO",
     friendship = "FAVORECE LA AMISTAD",
 }
 local titleFont, bodyFont, numberFont, smallFont

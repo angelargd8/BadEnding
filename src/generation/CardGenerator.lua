@@ -61,60 +61,41 @@ local function rollValue(hidden, isPrimary, random)
     return random(low, high)
 end
 
-local function responseWeights(practice)
+function CardGenerator.responseChances(emotionalIntelligence, practice, week)
     practice = practice or {}
+    local base = (week or 1) <= rules.relationshipShiftWeek
+        and rules.earlyResponseWeights or rules.lateResponseWeights
+    local perPoint = rules.responseWeightPerPoint
+    -- IE starts at one. Training and clinic rewards record each earned point
+    -- in both sense and practice, so it contributes to the draw only once.
+    local trainedIE = math.max(0, (emotionalIntelligence or 1) - 1,
+        practice.emotional_intelligence or 0)
+    local communication = math.max(0, practice.communication or 0)
     local study = math.max(0, practice.study or 0)
     local hobbies = math.max(0, practice.hobbies or 0)
-    local communication = math.max(0, practice.communication or 0)
-    local emotionalIntelligence = math.max(0, practice.emotional_intelligence or 0)
     local charisma = math.max(0, practice.charisma or 0)
-    local conversationPractice = communication + emotionalIntelligence
-
+    local friendship = base.friendship + perPoint * (trainedIE + communication)
+    local hate = base.hate + perPoint * study
+    local obsession = base.obsession + perPoint * (hobbies + charisma)
+    local other = hate + obsession
+    local friendshipChance = math.min(rules.maximumFriendshipChance,
+        friendship / (friendship + other))
+    -- After the cap, hate and obsession still share the rest in proportion.
     return {
-        hate = math.max(rules.minimumHateChance,
-            rules.unpreparedHateChance
-                - conversationPractice * rules.hateChanceReduction),
-        obsession = 1
-            + (study + hobbies) * rules.obsessionPerStudyOrHobby
-            + charisma * rules.obsessionPerCharisma,
-        friendship = 1
-            + conversationPractice * rules.friendshipPerConversationPractice,
+        friendship = friendshipChance,
+        hate = (1 - friendshipChance) * hate / other,
+        obsession = (1 - friendshipChance) * obsession / other,
     }
 end
 
-local function chooseNonFriendResponse(weights, random)
-    local total = weights.hate + weights.obsession
-    if random() * total < weights.hate then
-        return "hate"
-    end
+local function chooseResponseType(chances, random)
+    local roll = random()
+    if roll < chances.friendship then return "friendship" end
+    if roll < chances.friendship + chances.hate then return "hate" end
     return "obsession"
 end
 
-local function chooseResponseType(practice, random)
-    local weights = responseWeights(practice)
-
-    -- When emotional intelligence was practiced this week, exactly 85% of
-    -- its generated card outcomes are respectful friendship, not obsession.
-    if (practice and (practice.emotional_intelligence or 0) > 0) then
-        if random() < rules.emotionalIntelligenceFriendshipChance then
-            return "friendship"
-        end
-        return chooseNonFriendResponse(weights, random)
-    end
-
-    local remainingChance = 1 - weights.hate
-    local nonHateTotal = weights.obsession + weights.friendship
-    local roll = random()
-
-    if roll < weights.hate then return "hate" end
-    if (roll - weights.hate) / remainingChance * nonHateTotal
-        < weights.obsession then
-        return "obsession"
-    end
-    return "friendship"
-end
-
-function CardGenerator.card(stats, random, practice)
+function CardGenerator.card(stats, random, practice, week, weekPractice)
     random = random or defaultRandom
     local weights, total, effective = CardGenerator.weights(stats)
     assert(total > 0, "cannot generate a card from zero total stats")
@@ -126,12 +107,13 @@ function CardGenerator.card(stats, random, practice)
     end
 
     practice = practice or {}
-    local responseType = chooseResponseType(practice, random)
+    local chances = CardGenerator.responseChances(effective.sense, practice, week)
+    local responseType = chooseResponseType(chances, random)
     local pool
     if responseType == "obsession" then
+        local weeklyCharisma = (weekPractice or practice).charisma or 0
         local complimentChance = math.min(rules.maximumComplimentChance,
-            math.max(0, practice.charisma or 0)
-                * rules.complimentPerCharismaPractice)
+            math.max(0, weeklyCharisma) * rules.complimentPerCharismaPractice)
         pool = random() < complimentChance and phrases.charisma or phrases.obsession
     else
         pool = phrases[responseType]
@@ -145,13 +127,13 @@ function CardGenerator.card(stats, random, practice)
     }
 end
 
-function CardGenerator.pack(stats, count, random, practice)
+function CardGenerator.pack(stats, count, random, practice, week, weekPractice)
     count = count or 5
     assert(count >= 0 and count == math.floor(count),
         "pack size must be a non-negative integer")
     local cards = {}
     for i = 1, count do
-        cards[i] = CardGenerator.card(stats, random, practice)
+        cards[i] = CardGenerator.card(stats, random, practice, week, weekPractice)
     end
     return cards
 end

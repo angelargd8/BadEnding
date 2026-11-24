@@ -16,7 +16,7 @@ function PackOpeningInputSystem.update(scene, dt)
                 opening.selected = opening.selected + 1
             end
         elseif event.key == "return" or event.key == "space" then
-            if opening.ready then
+            if opening.ready or opening.finished then
                 registry:spawn({
                     event = true,
                     packContinueRequested = {},

@@ -3390,7 +3390,7 @@ end
 --- dropdown is drawn and dismissed exactly like any other popup, it just
 --- opens and closes itself instead of requiring your own OpenPopup() call.
 --- Equivalent of ImGui::Combo().
-function imlove.Combo(label, value, items)
+function imlove.Combo(label, value, items, heightInItems)
   local win = requireWindow("Combo")
   if win.skipItems then return value, false end
   local display, idText = splitLabel(label)
@@ -3443,6 +3443,10 @@ function imlove.Combo(label, value, items)
   local picked = false
   if isOpen then
     beginPopupContent(popId, idText, "popup", nil)
+    local itemCount = #(items or {})
+    local visibleCount = math.max(1, math.min(itemCount, heightInItems or 7))
+    local boxH = frameHeight() * visibleCount + style.windowPadding * 2
+    imlove.BeginChild("##combo_list_" .. idText, boxW, boxH, true)
     for i, item in ipairs(items or {}) do
       imlove.PushID(i)
       if imlove.Selectable(tostring(item), i == value) then
@@ -3452,6 +3456,7 @@ function imlove.Combo(label, value, items)
       end
       imlove.PopID()
     end
+    imlove.EndChild()
     endPopupContent(ctx.currentWindow)
   end
   return value, picked
