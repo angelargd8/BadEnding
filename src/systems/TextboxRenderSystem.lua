@@ -3,6 +3,7 @@
 -- the component; this system just substrings and paints.
 
 local TextboxRenderSystem = { name = "textboxRender" }
+local palette = require("src.data.menu_palette")
 
 local PAD = 10 -- inner padding, px
 
@@ -21,9 +22,9 @@ function TextboxRenderSystem.draw(scene)
     for _, pos, size, textbox in scene.registry:each(
         "position", "size", "textbox") do
         -- the panel: filled dark, thin light frame
-        love.graphics.setColor(0.08, 0.08, 0.12, 0.9)
+        love.graphics.setColor(palette.red)
         love.graphics.rectangle("fill", pos.x, pos.y, size.w, size.h, 4, 4)
-        love.graphics.setColor(0.8, 0.8, 0.85)
+        love.graphics.setColor(palette.rose)
         love.graphics.rectangle("line", pos.x, pos.y, size.w, size.h, 4, 4)
 
         -- the visible slice. `visibleChars` counts BYTES, and sub() on
@@ -43,12 +44,12 @@ function TextboxRenderSystem.draw(scene)
         while cut > 0 and midChar(cut) do
             cut = cut - 1
         end
-        love.graphics.setColor(1, 1, 1)
+        love.graphics.setColor(palette.beige)
         love.graphics.setFont(font)
         love.graphics.printf(textbox.text:sub(1, cut),
             pos.x + PAD, pos.y + PAD, size.w - 2 * PAD, "left")
     end
-    love.graphics.setColor(1, 1, 1)
+    love.graphics.setColor(palette.black)
 end
 
 return TextboxRenderSystem

@@ -1,121 +1,135 @@
 # Bad Ending — Documento de diseño del juego
 
-## 1. Concepto
+## Concepto
 
 **Género:** raising sim + card battler
 
-**Premisa:** es un simulador de citas al revés. El protagonista no intenta conquistar a alguien; busca que la chica deje de idealizarlo y pueda conocerlo como realmente es. Quiere terminar la relación con honestidad, sin humillarla ni arruinar la posibilidad de una amistad.
+**Premisa:** el protagonista es un estudiante introvertido de tercer año de Ao Koukou. Mizuki, una estudiante de primer año, está enamorada de una versión idealizada de él. Durante seis semanas, el jugador equilibra sus estudios, su felicidad y la relación con Mizuki.
 
-Seis semanas antes de graduarse, un estudiante introvertido de tercer año se da cuenta de que su novia, una alumna extrovertida de primer año, está enamorada de una versión idealizada de él. Ella habla de esa versión con otras personas y atribuye al protagonista cualidades y acciones que no son reales. Aunque ella le cae bien, esa idealización le incomoda y la relación no es compatible con lo que ambos quieren, pero ella no se ha dado cuenta.
+El título juega con la expectativa de un juego de citas. El objetivo es terminar como amigos, sin que Mizuki lo odie ni quede demasiado obsesionada con él, y cumplir las metas personales de estudio y felicidad.
 
-El título **Bad Ending** juega con la expectativa del género: el desenlace deseado no es que ella se enamore más, sino que ambos puedan separarse con claridad.
+## 3. Ciclo de juego
 
-## 2. Personajes y escenario
+Una partida dura seis semanas. El flujo actual es:
 
-- **Protagonista:** chico introvertido de tercer año en la escuela Ao Koukou. Su nombre y sus respuestas pueden quedar a elección del jugador. No es perfecto: puede ser torpe, reservado, impaciente o tener intereses que ella desconoce.
+1. La pantalla inicial permite empezar una partida, cargar una partida guardada o salir.
+2. Una escena de apertura presenta la situación. El jugador avanza el texto con Enter o Espacio.
+3. De lunes a viernes, el jugador elige una de cinco actividades. Cada elección aumenta su contador de práctica y, cuando corresponde, el atributo asociado; también muestra una viñeta breve y avanza el día.
+4. El sábado por la mañana se abre un sobre con cinco cartas nuevas. Después, el protagonista aparece en el interior de su casa; al salir puede recorrer el mapa.
+5. En el mapa se pueden visitar lugares y jugar sus minijuegos. En la cafetería, la interacción con la mesa de Mizuki lleva a preparar la cita.
+6. Para la cita se seleccionan cinco cartas de la colección. La cita tiene cuatro intercambios: Mizuki inicia cada uno y el jugador escoge una carta como respuesta.
+7. El domingo se muestra el resumen de la semana. Al terminar la sexta semana se evalúan los requisitos de victoria o derrota.
 
-- **La chica:** estudiante extrovertida de primer año. No es una antagonista; está enamorada de una imagen idealizada y no se da cuenta de cuánto se aleja esa imagen de la realidad.
+La partida se guarda al llegar al resumen dominical y al abrir el sobre del sábado. El menú permite cargar la partida guardada.
 
-- **Lugar:** Osaka, principalmente Ao Koukou y sus alrededores.
-- **Plazo:** las seis semanas previas a la graduación del protagonista.
-- **Tono:** drama juvenil con humor ocasional. Las decisiones pueden ser incómodas y tener consecuencias, pero el juego no recompensa el abuso ni presenta el odio como una victoria.
+## 4. Actividades y atributos
 
-## 3. Objetivo emocional
+El menú semanal ofrece cinco actividades:
 
-El jugador intenta comunicar una verdad difícil: “me caes bien, pero no soy la persona que imaginas y no quiero seguir en esta relación”. Las respuestas deben permitir:
-
-1. **Aclarar malentendidos** y mostrar defectos o límites reales.
-2. **Poner límites** de manera directa y respetuosa.
-3. **Ser hiriente o evasivo**, dañando la confianza.
-4. **Reforzar accidentalmente la idealización**, por ejemplo al aceptar un cumplido o evitar corregir una historia falsa.
-
-El juego reconoce que una conversación no controla por completo los sentimientos de otra persona. El jugador sí controla si habla con honestidad, si evita la conversación y cómo trata a la chica.
-
-## 4. Ciclo de juego
-
-La partida cubre seis semanas. Cada semana combina actividades personales con una oportunidad de interactuar:
-
-Antes de la primera semana, una escena de apertura presenta el monólogo del protagonista. El jugador avanza cada frase con Enter o Espacio.
-
-1. El jugador elige cómo pasar sus días y qué habilidades practicar.
-2. Esas elecciones influyen en las cartas de conversación disponibles.
-3. La chica busca hablar, compartir rumores o pasar tiempo con el protagonista.
-4. El jugador elige una respuesta o puede evitarla.
-5. La conversación modifica la obsesión, el odio y la posibilidad de una amistad respetuosa.
-6. Un resumen muestra qué cambió y avanza el calendario.
-
-La graduación cierra la historia con un desenlace basado en las decisiones y el estado de la relación.
-
-## 5. Actividades
-
-Durante la semana, el protagonista puede dedicar tiempo a:
-
-| Actividad | Desarrollo | Uso narrativo |
+| Actividad | Atributo que aumenta | Seguimiento |
 |---|---|---|
-| Pasatiempos | Intereses propios y autoconocimiento | Ayuda a mostrar quién es fuera de la imagen que ella inventó. |
-| Estudiar | Conocimiento y preparación para graduarse | Da recursos para explicar con claridad y corregir versiones falsas. |
-| Practicar comunicación efectiva | Escuchar, expresarse con claridad y poner límites | Desbloquea respuestas directas, cuidadosas y honestas. |
-| Practicar inteligencia emocional | Reconocer emociones propias y ajenas | Ayuda a responder sin escalar una conversación difícil. |
-| Practicar carisma | Ensayar cumplidos y frases bonitas que sí sean sinceros | Puede aumentar la idealización; el protagonista debe evitar prometer sentimientos que no tiene. |
+| Estudiar | Estudio (`int`) | Práctica de estudio |
+| Pasatiempos | No aumenta un atributo numérico | La práctica de pasatiempos también se usa para calcular felicidad |
+| Comunicación efectiva | Comunicación (`charm`) | Práctica de comunicación |
+| Inteligencia emocional | Inteligencia emocional (`sense`) | Práctica de inteligencia emocional |
+| Carisma | Carisma (`charm`) | Práctica de carisma |
 
-El prototipo conserva tres valores numéricos para las cartas (`int`, `charm`, `sense`) y registra por separado el tiempo dedicado a cada una de las cinco actividades. Así, carisma tiene su propio progreso aunque el formato actual de las cartas aún reutilice el eje numérico `charm`.
+Comunicación y carisma comparten el atributo `charm`, aunque sus contadores de práctica se mantienen separados. El juego registra la práctica total y la práctica de la semana para modificar la generación de cartas y mostrar el resumen. Las actividades tienen varias viñetas breves que se eligen al azar.
 
-En el prototipo, los tres ejes comienzan en 1 y la interfaz muestra su proporción en un triángulo, sin revelar los valores exactos. Esta forma es una representación provisional de las habilidades, no una medida del valor personal del protagonista.
+La pantalla semanal muestra el día, el número de semana, el protagonista, la actividad seleccionada, un radar de estudio, felicidad e inteligencia emocional, y el texto de la actividad. La felicidad se calcula a partir de la proporción de práctica dedicada a pasatiempos.
 
-## 6. Cartas de conversación
+## 5. Mapa, movimiento y lugares
 
-Las cartas representan **respuestas**, no temas para conquistar a la chica. Cada carta contiene una frase y valores asociados a los tres ejes de habilidades. La colección determina qué respuestas aparecen durante una conversación.
+El mapa representa el pueblo donde vive el protagonista y los lugares que frecuenta. Está dividido en estas escenas de exploración:
 
-Las cartas se generan en tres categorías de resultado:
+- **Mapa principal:** casa y escuela.
+- **East Map:** clínica y cafetería.
+- **Interiores separados:** casa, escuela, clínica y cafetería.
 
-- **Obsesión:** temas en común, estudio y cumplidos pueden hacer que ella se enamore más de la imagen idealizada.
-- **Odio:** respuestas hirientes, que aparecen con más frecuencia si el protagonista no practica comunicación ni inteligencia emocional.
-- **Amistad:** respuestas honestas y cuidadosas, más frecuentes cuando practica comunicación e inteligencia emocional.
+El personaje se mueve con las flechas o WASD. Las colisiones con edificios, muebles y árboles bloquean el paso; las zonas de entrada y salida activan transiciones entre escenas. Al presionar **M** desde la escena semanal se abre el mapa y desde el mapa principal se vuelve a la escena semanal. Desde otras escenas de exploración, M permite regresar al mapa principal. **C** abre la colección de cartas.
 
-Los valores de las cartas reflejan las habilidades practicadas, pero no hacen que una respuesta sea moralmente correcta por tener un número alto. El sentido narrativo de la frase y el contexto también cuentan.
+Visitar una ubicación puede conceder una recompensa de actividad una vez por semana. Las zonas de interacción de los interiores activan los minijuegos o, en la cafetería, el armado del mazo para la cita.
 
-**Cómo se inclina el mazo:** si no ha practicado comunicación ni inteligencia emocional, el 65 % de las cartas se genera como respuesta de odio. Cada práctica de esas habilidades reduce esa probabilidad en cinco puntos, hasta un mínimo del 10 %. Las cartas restantes se reparten entre obsesión y amistad. Su peso inicial es 1 para cada categoría; cada práctica de estudio o pasatiempos suma 0.15 al peso de obsesión, y cada práctica de carisma suma 0.35. Cada práctica de comunicación o inteligencia emocional suma 0.35 al peso de amistad. Estudio y pasatiempos generan temas en común y refuerzan que a ella le atrae que él sea estudioso; carisma aporta cumplidos y aumenta su frecuencia un 10 % por práctica, hasta el 75 %. Comunicación e inteligencia emocional hacen más frecuentes las respuestas de amistad. Estos pesos son parámetros iniciales para ajustar en pruebas de juego.
+## 6. Minijuegos y progreso
 
-## 7. Estados de la relación
+Los minijuegos no usan una probabilidad para decidir si el jugador gana. Al alcanzar un resultado terminal, cada partida concede **5 puntos** a su área y la misma partida no puede conceder el premio otra vez:
 
-Las conversaciones y la evitación modifican tres valores independientes:
-
-| Estado | Identificador heredado | Qué representa |
+| Lugar | Minijuego | Recompensa |
 |---|---|---|
-| **Obsesión** | `obsession` | Cuánto se aferra ella a la versión idealizada del protagonista. No equivale a una relación sana. |
-| **Odio** | `hate` | Resentimiento causado por el rechazo, la evasión o las respuestas crueles. |
-| **Amistad** | `friendshipness` | Confianza para aceptar los límites y conservar una amistad respetuosa. |
+| Casa | Snake | +5 puntos de pasatiempos, que cuentan para felicidad |
+| Escuela | 2048 | +5 puntos de estudio y al atributo de estudio |
+| Clínica | Flappy Bird | +5 puntos de inteligencia emocional y a su atributo |
 
-Evitarla o ignorarla no reduce por sí solo la obsesión; sí incrementa el odio porque deja los malentendidos sin resolver. Hablar con ella puede reducir la idealización y aumentar la amistad, pero una respuesta hiriente puede aumentar el odio y una respuesta complaciente puede reforzar la obsesión.
+El resultado terminal puede ser completar, perder o terminar la partida, según el minijuego. La recompensa se concede una sola vez por ejecución del minijuego. Si se juega el sábado, al salir se continúa hacia el armado de la cita; en otros días se regresa al mapa interior correspondiente.
 
-Estos estados no son una sola barra: es posible que coexistan sentimientos contradictorios. El diseño final debe evitar que el jugador pueda optimizar el rechazo como si fuera una puntuación de combate.
+## 7. Colección y generación de cartas
 
-## 8. Desenlaces
+Cada sobre semanal agrega cinco cartas a la colección. Una carta tiene una frase, una categoría de respuesta y valores en los atributos heredados `int`, `charm` y `sense`. El atributo principal se selecciona según los valores del protagonista; los otros valores también pueden contribuir en menor medida.
 
-La graduación ocurre al terminar la sexta semana. Los desenlaces se determinan por las conversaciones, los límites expresados y los tres estados de relación.
+Las cartas pertenecen a tres categorías:
 
-- **Amistad respetuosa:** ella entiende que la imagen que tenía no era realista; ambos aceptan terminar la relación y conservar una amistad con límites claros.
-- **Separación amarga:** la relación termina, pero la evasión o las respuestas hirientes dejan resentimiento.
-- **Idealización persistente:** ella sigue aferrada a la versión inventada y no acepta plenamente la incompatibilidad.
-- **Desenlace abierto:** la conversación no resuelve todo, pero el protagonista es honesto y deja que ella decida qué hacer con esa verdad.
+- **Amistad:** respuestas de apoyo y comprensión.
+- **Odio:** respuestas hostiles o hirientes.
+- **Obsesión:** respuestas que refuerzan la idealización; pueden incluir cumplidos.
 
-Los nombres y umbrales de los finales se deben validar con pruebas de juego. La amistad es un desenlace positivo, aunque no signifique seguir como pareja.
+Las probabilidades base cambian después de la tercera semana. Las actividades practicadas las modifican proporcionalmente:
 
-## 9. Presentación y accesibilidad narrativa
+| Semanas | Amistad | Odio | Obsesión |
+|---|---:|---:|---:|
+| 1–3 | 45 % | 40 % | 15 % |
+| 4–6 | 14 % | 23 % | 63 % |
 
-- La interfaz y los textos del juego estarán en español.
-- Mostrar con claridad qué respuesta se está eligiendo; los valores de relación pueden presentarse mediante cambios cualitativos en diálogos, retratos y resúmenes.
-- Evitar que el juego etiquete a la chica como “loca” o culpable por sentir afecto. El conflicto nace de una idealización y de la incompatibilidad, no de que sentir cariño sea malo.
-- Mantener al protagonista falible. La historia no debe convertir su versión de los hechos en verdad absoluta sin espacio para reconocer sus propias acciones.
+Por cada punto de práctica se agrega peso a la categoría correspondiente: inteligencia emocional y comunicación favorecen amistad; estudio favorece odio; pasatiempos y carisma favorecen obsesión. La probabilidad de amistad tiene un máximo de 60 %. El carisma practicado durante la semana también puede hacer que una carta de obsesión use una frase de cumplido; esa posibilidad llega como máximo a 75 %.
 
-## 10. Alcance de la primera versión
+Antes de una cita, el jugador selecciona cinco cartas de su colección para el mazo de esa cita. Se juegan cuatro y cada carta usada se elimina de la colección. Las cartas seleccionadas pero no jugadas permanecen en la colección.
 
-1. Calendario de seis semanas y ciclo de actividades.
-2. Escena de apertura con el monólogo inicial y avance por Enter o Espacio.
-3. Cinco actividades: pasatiempos, estudio, comunicación efectiva, inteligencia emocional y carisma.
-4. Conversaciones con opciones de respuesta en forma de cartas.
-5. Tres valores independientes de relación: obsesión, odio y amistad.
-6. Consecuencias explícitas para hablar, evitarla o ignorarla.
-7. Escenas en Ao Koukou, Osaka, y finales de graduación.
+## 8. Relación y citas
 
-Las escenas de mapa, generación de cartas y entrenamiento que ya existen son prototipos técnicos. Todavía no implementan el sistema completo de conversación ni los desenlaces de este documento.
+La partida comienza con 75 puntos de obsesión, 25 de amistad y 0 de odio. El resumen muestra la proporción de cada valor respecto del total acumulado; no es una escala única de afecto.
+
+Al jugar una carta:
+
+- Amistad suma un punto de amistad y resta cinco puntos de obsesión, hasta un mínimo de cero.
+- Odio suma un punto de odio y resta tres puntos de obsesión, hasta un mínimo de cero.
+- Obsesión suma un punto de obsesión.
+
+Al resolver la cita, un resultado positivo suma un punto de amistad; uno negativo suma un punto de odio y reduce tres puntos de obsesión. La cita usa una tirada aleatoria. La probabilidad parte de 35 %, aumenta 10 puntos por cada carta de amistad jugada, baja 7 por cada carta de odio y 3 por cada carta de obsesión, y recibe un bono de hasta 18 puntos por comunicación e inteligencia emocional. El resultado final queda limitado entre 5 % y 95 %.
+
+## 9. Resumen semanal y finales
+
+El resumen dominical presenta los totales de estudio, felicidad e inteligencia emocional; las proporciones de obsesión, odio y amistad; las actividades de la semana; y los porcentajes de estudio y felicidad. Al avanzar después de los primeros cinco resúmenes comienza la semana siguiente. Tras el sexto, se evalúa el final.
+
+Para **ganar** deben cumplirse al mismo tiempo estas condiciones:
+
+- La proporción de odio debe ser menor que 30 %.
+- La proporción de obsesión debe ser menor que 15 %.
+- El atributo de estudio debe ser mayor que 30.
+- La proporción de la práctica total dedicada a pasatiempos, que representa felicidad, debe ser mayor que 30 %.
+
+Si se cumplen, la pantalla dice: **«Ahora Mizuki y tú son amigos.»**
+
+Si se pierde, se muestran los motivos que correspondan:
+
+- Odio: **«Mizuki terminó odiándote.»**
+- Obsesión: **«Mizuki quedó obsesionada contigo.»**
+- Estudio insuficiente: **«Pasaste mucho tiempo con tus amigos y en tus pasatiempos, pero descuidaste los estudios y no te graduarás.»**
+- Felicidad insuficiente: **«Pasaste mucho tiempo estudiando y aprendiendo inteligencia emocional, pero descuidaste a tus amigos y tus pasatiempos. No eres feliz.»**
+- Si faltan estudio y felicidad: **«Descuidaste tus estudios y tus pasatiempos. No te graduarás y también perdiste tiempo con tus amigos.»**
+
+Las condiciones pueden combinarse: por ejemplo, un mensaje sobre la relación puede aparecer junto al mensaje de estudio o felicidad.
+
+## 10. Presentación, controles y guardado
+
+- La interfaz y las viñetas están en español.
+- **Flechas / WASD:** moverse por los mapas.
+- **M:** abrir o regresar al mapa según la escena.
+- **C:** abrir la colección.
+- **Flechas / A-D, Espacio / Enter y clic:** navegar y seleccionar opciones o cartas según la pantalla.
+- **Espacio / Enter o clic:** avanzar la apertura, los textos, la cita y el resumen cuando corresponda.
+- El menú inicial ofrece **Start**, **Load Game** y **Quit**.
+
+## 11. Organización técnica actual
+
+El proyecto usa una arquitectura ECS. Las escenas componen entidades de datos y sistemas pequeños que procesan movimiento, colisiones, transiciones, selección de actividades, generación de cartas, minijuegos, presentación y guardado. El estado de partida se conserva al cambiar de escena. Los interiores se construyen mediante una fábrica compartida con configuración distinta para cada lugar.
+
+La historia ramificada, las conversaciones narrativas extensas y los desenlaces intermedios descritos en borradores anteriores no forman parte de la versión actual. El final implementado es una evaluación de relación, estudio y felicidad al cierre de la sexta semana.

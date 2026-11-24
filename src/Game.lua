@@ -13,11 +13,45 @@
 
 local Game = {}
 local RunState = require("src.state.RunState")
+local SaveFile = require("src.state.SaveFile")
 
 local factories = {} -- scene name -> function(payload) -> Scene
 local current = nil
 local runState = nil
 local sceneStack = {}
+
+local MAP_EXIT_SCENES = {
+    map = true,
+    eastMap = true,
+    homeInterior = true,
+    schoolInterior = true,
+    cafeInterior = true,
+    clinicInterior = true,
+    snake = true,
+    flappyBird = true,
+    game2048 = true,
+    cafeAppointment = true,
+    deckBuilder = true,
+}
+
+local SAVEABLE_SCENES = {
+    opening = true,
+    week = true,
+    packOpening = true,
+    homeInterior = true,
+    schoolInterior = true,
+    map = true,
+    eastMap = true,
+    cafeInterior = true,
+    clinicInterior = true,
+    cafeAppointment = true,
+    deckBuilder = true,
+    sundaySummary = true,
+    ending = true,
+    snake = true,
+    flappyBird = true,
+    game2048 = true,
+}
 
 -- Scenes register a factory, not an instance: every entry builds the
 -- scene fresh, so no stale state can survive a visit.
@@ -60,9 +94,116 @@ function Game.start(name)
     -- Load or create the plain-data state once. Every scene receives this
     -- same table, so switching scenes cannot reset progress or collection.
     if not runState then
-        runState = RunState.load()
+        runState = name == "mainMenu" and RunState.new() or RunState.load()
     end
     performSwitch(name, nil)
+end
+
+function Game.startNewGame()
+    runState = RunState.new()
+    SaveFile.save({
+        runState = runState,
+        scene = "opening",
+        payload = { page = 1 },
+    })
+    performSwitch("opening")
+end
+
+local function inferSavedScene(saved, state)
+    if type(saved.scene) == "string" and SAVEABLE_SCENES[saved.scene]
+            and factories[saved.scene] then
+        return saved.scene
+    end
+    if state.day == 7 then return "sundaySummary" end
+    if state.day == 6 then
+        return state.packWeek == state.week and "homeInterior" or "packOpening"
+    end
+    return "week"
+end
+
+function Game.loadSavedGame()
+    local saved = SaveFile.load()
+    if type(saved) ~= "table" or type(saved.runState) ~= "table" then
+        return false
+    end
+
+    runState = RunState.restore(saved.runState)
+    performSwitch(inferSavedScene(saved, runState), saved.payload)
+    return true
+end
+
+local function sceneSavePayload(scene)
+    local registry = scene.registry
+    local payload = {}
+    for _, position in registry:each("position", "body") do
+        payload.x, payload.y = position.x, position.y
+        break
+    end
+
+    local opening = registry:resource("opening")
+    if opening then payload.page = opening.page end
+
+    local packOpening = registry:resource("packOpening")
+    if packOpening then payload.selectedCard = packOpening.selected end
+
+    local snake = registry:resource("snake")
+    if snake then payload.snake = snake end
+
+    local flappyBird = registry:resource("flappyBird")
+    if flappyBird then payload.flappyBird = flappyBird end
+
+    local game2048 = registry:resource("game2048")
+    if game2048 then payload.game2048 = game2048 end
+
+    local cafeAppointment = registry:resource("cafeAppointment")
+    if cafeAppointment then payload.cafeAppointment = cafeAppointment end
+
+    local deckBuilder = registry:resource("deckBuilder")
+    if deckBuilder then payload.deckBuilder = deckBuilder end
+
+    local ending = registry:resource("ending")
+    if ending then payload.result = ending.result end
+
+    local dayloop = registry:resource("dayloop")
+    if dayloop then
+        payload.dayloop = {
+            phase = dayloop.phase,
+            timer = dayloop.timer,
+            flipped = dayloop.flipped,
+        }
+        local _, menu = registry:first("menu")
+        if menu then payload.menuCursor = menu.cursor end
+        local _, textbox = registry:first("textbox")
+        if textbox then
+            payload.textbox = {
+                text = textbox.text,
+                visibleChars = textbox.visibleChars,
+            }
+        end
+    end
+    return payload
+end
+
+function Game.save()
+    if not current then return false, "No hay una partida activa" end
+
+    local scene = current
+    -- The collection browser is modal. Save the scene underneath it so
+    -- loading returns to the game instead of reopening the browser.
+    if scene.name == "collection" then
+        scene = sceneStack[#sceneStack]
+    end
+    if not scene or not SAVEABLE_SCENES[scene.name] then
+        return false, "Esta escena no se puede guardar"
+    end
+
+    local ok, message = SaveFile.save({
+        runState = runState,
+        scene = scene.name,
+        payload = sceneSavePayload(scene),
+    })
+    if ok then return true end
+    return false, message or "No se pudo escribir el archivo de guardado"
 end
 
 function Game.update(dt)
@@ -75,6 +216,22 @@ function Game.update(dt)
     -- push, readers poll, the runtime clears.)
     for _, entity in ipairs(current.registry:query("event")) do
         current.registry:destroy(entity)
+    end
+
+    local menuActionEntity, menuAction = current.registry:first("mainMenuActionRequest")
+    if menuAction then
+        current.registry:destroy(menuActionEntity)
+        if menuAction.action == "start" then
+            Game.startNewGame()
+        elseif menuAction.action == "load" then
+            if not Game.loadSavedGame() then
+                local menu = current.registry:resource("mainMenu")
+                if menu then menu.message = "No hay una partida guardada." end
+            end
+        elseif menuAction.action == "quit" then
+            love.event.quit()
+        end
+        return
     end
 
     -- Modal scene requests are handled after the update, just like a normal
@@ -104,9 +261,64 @@ function Game.draw()
     current:draw()
 end
 
+local function weekResumePayload(scene)
+    local registry = scene.registry
+    local day = registry:resource("dayloop") or {}
+    local _, menu = registry:first("menu")
+    local _, textbox = registry:first("textbox")
+    return {
+        dayloop = {
+            phase = day.phase or "choosing",
+            timer = day.timer or 0,
+            flipped = day.flipped or false,
+        },
+        menuCursor = menu and menu.cursor or 1,
+        textbox = textbox and {
+            text = textbox.text,
+            visibleChars = textbox.visibleChars,
+        } or nil,
+    }
+end
+
 function Game.keypressed(key)
     if key == "escape" then -- quitting is a Game concern, not a scene's
         love.event.quit()
+        return
+    end
+    if key == "m" then
+        if current and current.name == "week" then
+            local runState = current.registry:resource("runState")
+            if runState then
+                runState.weekResume = weekResumePayload(current)
+            end
+            current.registry:spawn({
+                switchRequest = { to = "map" },
+            })
+            return
+        elseif current and current.name == "map" then
+            local runState = current.registry:resource("runState")
+            local resume = runState and runState.weekResume
+            if resume then
+                runState.weekResume = nil
+                current.registry:spawn({
+                    switchRequest = { to = "week", payload = resume },
+                })
+            end
+            return
+        end
+
+        local source = current
+        if source and source.name == "collection" then
+            source = sceneStack[#sceneStack]
+        end
+        if source and MAP_EXIT_SCENES[source.name] and source.name ~= "map" then
+            current.registry:spawn({
+                switchRequest = {
+                    to = "map",
+                    payload = { x = 288, y = 260 },
+                },
+            })
+        end
         return
     end
     if key == "c" and current.name ~= "collection" then

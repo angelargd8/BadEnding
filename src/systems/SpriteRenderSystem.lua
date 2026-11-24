@@ -21,6 +21,9 @@ local SpriteRenderSystem = { name = "spriteRender" }
 function SpriteRenderSystem.draw(scene)
     local registry = scene.registry
 
+    -- Sprite tint is global Love2D state. Reset it so floor colors from
+    -- TilemapRenderSystem do not tint characters or props.
+    love.graphics.setColor(1, 1, 1)
     for _, pos, sprite in registry:each("position", "sprite") do
         local sheet = ImageManager.sheet(sprite.path, sprite.w, sprite.h)
         local scale = sprite.scale or 1

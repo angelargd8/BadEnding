@@ -13,7 +13,9 @@ function StatsSystem.update(scene, dt)
     for _, pick in scene.registry:each("activityPicked") do
         local runState = scene.registry:resource("runState")
         local stat = activities[pick.option].stat
-        runState.stats[stat] = runState.stats[stat] + 1
+        if stat then
+            runState.stats[stat] = runState.stats[stat] + 1
+        end
 
         runState.practice[pick.option] = (runState.practice[pick.option] or 0) + 1
         runState.weekPractice[pick.option] =

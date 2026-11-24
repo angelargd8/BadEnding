@@ -13,9 +13,9 @@
 -- fixed-size canvas, and that canvas is shown in a viewport window with
 -- the tool panels around it (see enterEditor).
 --
---   F1   show/hide the tool panels (the viewport is the game — it stays)
---   F9   pause the game (the UI keeps running — that's the point)
---   F10  advance exactly one frame while paused
+--   E / F1   show/hide the tool panels (the viewport is the game — it stays)
+--   F / F9   pause/resume the game (the UI keeps running — that's the point)
+--   Q / F10  advance exactly one frame while paused
 
 local imlove = require("lib.imlove")
 local Game = require("src.Game") -- for the scene switcher only
@@ -41,6 +41,7 @@ local EDITOR_BG = { 0.16, 0.16, 0.18 }
 local selectedEntity = nil
 local inspectedComponent = 1 -- Combo index into the entity's components
 local inspectedScene = nil -- to drop the selection when the scene changes
+local saveMessage = ""
 
 local FRAME_HISTORY = 120 -- two seconds' worth at 60fps
 local frameTimes = {} -- rolling window of dt, in milliseconds
@@ -275,7 +276,7 @@ end
 -- scene runs, which systems run. The width is set explicitly; a snapped
 -- window keeps it while the edge pins its height.
 local function buildEnginePanel(scene)
-    imlove.SetNextWindowSize(230, 330, "once")
+    imlove.SetNextWindowSize(360, 500, "always")
     imlove.SetNextWindowSnap("right", "once")
     if imlove.Begin("Engine") then
         -- the switcher spawns the SAME switchRequest any system would —
@@ -285,18 +286,34 @@ local function buildEnginePanel(scene)
         -- registry: Game.update is what honors it, on the next step.
         if imlove.CollapsingHeader("scenes", true) then
             imlove.Text("current: %s", scene.name)
-            for i, name in ipairs(Game.sceneNames()) do
-                if i > 1 then imlove.SameLine() end
-                if imlove.Button(name) then
-                    scene.registry:spawn({ switchRequest = { to = name } })
+            local names = Game.sceneNames()
+            local selected = 1
+            for i, name in ipairs(names) do
+                if name == scene.name then
+                    selected = i
+                    break
                 end
+            end
+            imlove.PushStyleVar("sliderWidth", 250)
+            local nextSelection, changed = imlove.Combo("scene", selected, names, 7)
+            imlove.PopStyleVar()
+            if changed and names[nextSelection] then
+                scene.registry:spawn({
+                    switchRequest = { to = names[nextSelection] },
+                })
             end
         end
 
-        -- the checkbox list IS the frame order, top to bottom — and each
-        -- one is a live experiment: switch a system off and watch the
-        -- world keep running without it. The off-flag lives on the scene
-        -- (see Scene.new), so a fresh scene always starts with all on.
+        if imlove.CollapsingHeader("save", true) then
+            if imlove.Button("Guardar partida", 150, 28) then
+                local saved, message = Game.save()
+                saveMessage = saved and "Partida guardada" or (message or "No se pudo guardar")
+            end
+            if saveMessage ~= "" then imlove.Text("%s", saveMessage) end
+        end
+
+        -- The checkbox list is the frame order, top to bottom. Toggle a
+        -- system off to see how the scene changes without that behavior.
         if imlove.CollapsingHeader("systems", true) then
             for _, system in ipairs(scene.systems) do
                 local enabled = imlove.Checkbox(system.name or "(unnamed)",
@@ -357,11 +374,11 @@ function DebugOverlay.enterEditor()
 
     -- the window is sized by what has to FIT, not by a multiplier of
     -- the game: the centered (scaled) viewport plus a gutter per side wide
-    -- enough for the panels (Engine is 230 + window chrome), and
+    -- enough for the panels (Engine is 360 + window chrome), and
     -- headroom above/below for the transport bar. A multiplier broke
     -- the day the game's resolution changed under it (960×540 → the
     -- GDD's 640×400) and the panels no longer fit beside the viewport.
-    local gutter, headroom = 280, 100
+    local gutter, headroom = 360, 100
     local vw, vh = Screen.w * viewScale, Screen.h * viewScale
     love.window.setMode(vw + 2 * gutter, vh + 2 * headroom,
         { display = Screen.display }) -- re-open on the capture monitor
@@ -404,7 +421,7 @@ function DebugOverlay.beginFrame(scene)
     end
 
     -- the viewport is NOT gated on `visible`: in editor mode it IS the
-    -- game. F1 hides the tools around it, never the game itself. Built
+    -- game. E/F1 hides the tools around it, never the game itself. Built
     -- first, so the panels stack in front of it if they ever overlap.
     if editor then
         buildGameViewport()
@@ -436,7 +453,7 @@ function DebugOverlay.shouldUpdate()
     -- beginFrame: this gate is the single source of truth for "a game
     -- frame is about to happen", so the numbers freeze with the world —
     -- watching them dance over a paused game reads as a bug — and every
-    -- F10 step appends exactly one honest sample. (Relies on main.lua
+    -- Q/F10 step appends exactly one honest sample. (Relies on main.lua
     -- calling shouldUpdate once per frame, which is its contract.)
     if run then
         displayedFPS = love.timer.getFPS()
@@ -453,13 +470,13 @@ function DebugOverlay.draw()
 end
 
 function DebugOverlay.keypressed(key)
-    if key == "f1" then
+    if key == "e" or key == "f1" then
         DebugOverlay.toggle()
         return true
-    elseif key == "f9" and visible then
+    elseif (key == "f" or key == "f9") and visible then
         paused = not paused
         return true
-    elseif key == "f10" and visible then
+    elseif (key == "q" or key == "f10") and visible then
         stepOnce = true
         return true
     end

@@ -29,6 +29,10 @@ y avanza el día. Durante la viñeta, Enter termina de escribir el texto al
 instante. Pulsa C en cualquier escena para abrir la colección y C otra vez
 para volver exactamente a la escena anterior.
 
+Para depurar, `E` o `F1` muestra u oculta las herramientas; `F` o `F9` pausa o
+reanuda el juego; `Q` o `F10` avanza un cuadro mientras está pausado. Ejecutar
+`love . --debug` también abre el editor con el juego dentro de una vista ampliada.
+
 ## Progression-Cycle
 
 La partida conecta la preparación semanal con el mazo de respuestas:
@@ -36,8 +40,8 @@ La partida conecta la preparación semanal con el mazo de respuestas:
 1. De lunes a viernes, el jugador elige una actividad. Cada elección modifica
    las estadísticas acumuladas y registra la práctica de esa semana.
 2. Al terminar el viernes, la fecha pasa a sábado por la mañana y se abre un
-   sobre con cinco cartas generadas a partir de las estadísticas acumuladas y
-   la práctica de la semana actual.
+   sobre con cinco cartas. Su tipo depende de la semana y del progreso
+   acumulado hasta abrir el sobre.
 3. Las cinco cartas se agregan una sola vez al `runState.collection`. El mazo
    acumula las cartas de las semanas anteriores y las conserva hasta que se
    utilicen en una conversación.
@@ -50,15 +54,15 @@ La partida conecta la preparación semanal con el mazo de respuestas:
    reinicia el contador de práctica semanal. Al terminar el sobre de la sexta
    semana, el ciclo concluye y no se inicia una séptima semana.
 
-Cada actividad suma 1 a una estadística acumulada: estudiar → `int`; comunicación
-y carisma → `charm`; pasatiempos e inteligencia emocional → `sense`. Esos valores
-inclinan qué habilidad será principal y los números de cada carta. La práctica
-de la semana inclina el resultado: estudiar y pasatiempos favorecen obsesión;
-comunicación e inteligencia emocional reducen el odio (5 puntos porcentuales
-por práctica, mínimo 10 %) y favorecen amistad; carisma aumenta la obsesión y
-la posibilidad de una frase bonita (10 puntos por práctica, máximo 75 %). Si se
-practicó inteligencia emocional esa semana, cada carta tiene 85 % de probabilidad
-de ser de amistad.
+Estudiar desarrolla `int`, comunicación y carisma desarrollan `charm`, y entrenar
+inteligencia emocional desarrolla `sense`. Estos valores influyen en la habilidad
+principal y los números de cada carta. Los pasatiempos suman felicidad.
+
+La amistad y el odio son las cartas más frecuentes al inicio. Desde la semana 4,
+la base favorece la obsesión. Los puntos acumulados en IE y comunicación favorecen
+la amistad (hasta el 60 % por carta), los de estudio favorecen el odio y los de
+pasatiempos o carisma favorecen la obsesión. Si sale obsesión, el carisma practicado
+esa semana también influye en la posibilidad de que la frase sea un cumplido.
 
 Sí, se usa aleatoriedad: cada sobre recibe una semilla aleatoria y se hacen
 sorteos para la habilidad principal, los valores, el resultado y la frase. Las
@@ -89,9 +93,9 @@ las opciones leyendo el componente `menu`. En este proyecto, `draw()` cumple
 el papel de `Render`.
 
 **Conexión con el juego.** Las actividades definen en qué se prepara el
-protagonista. Estudio y pasatiempos inclinan las cartas hacia temas compartidos
-y obsesión; comunicación e inteligencia emocional favorecen respuestas de
-amistad y reducen las respuestas de odio; carisma practica cumplidos.
+protagonista. Dedicar más días al estudio aumenta la posibilidad de recibir cartas
+de odio. Practicar comunicación o IE favorece la amistad, y elegir pasatiempos o
+carisma favorece la obsesión.
 
 ### 2. Cuadro de texto y viñetas
 
@@ -111,8 +115,9 @@ con la chica.
 
 ### 3. HUD de semana y habilidades
 
-**Descripción.** Muestra el día y la semana actual junto con un radar que
-representa la proporción entre las tres estadísticas numéricas del prototipo.
+**Descripción.** Muestra el día y la semana actual junto con un radar de estudio,
+felicidad e inteligencia emocional. La estrella indica los puntos acumulados
+por pasatiempos, incluidos los que se ganan jugando Snake.
 
 **Implementación (`Setup → Update → Render`).**
 `DateRenderSystem.setup()` y `RadarRenderSystem.setup()` preparan sus fuentes.

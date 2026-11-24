@@ -43,7 +43,8 @@ function PackGenerationSystem.update(scene, dt)
         local ok, pack = pcall(CardGenerator.pack,
             runState.stats, rules.packSize,
             function(...) return rng:random(...) end,
-            runState.weekPractice or runState.practice)
+            runState.practice or runState.weekPractice,
+            runState.week, runState.weekPractice)
 
         if ok then
             lab.lastPack, lab.lastPackSeed = pack, seed

@@ -2,15 +2,9 @@
 -- Cards and their details belong to separate render systems.
 
 local Screen = require("src.Screen")
+local palette = require("src.data.menu_palette")
 
 local CollectionChromeRenderSystem = { name = "collectionChromeRender" }
-
-local COLORS = {
-    desk = { 0.055, 0.071, 0.115 },
-    shelf = { 0.086, 0.110, 0.164 },
-    cream = { 0.94, 0.89, 0.76 },
-    faint = { 0.94, 0.89, 0.76, 0.42 },
-}
 
 local titleFont, smallFont
 
@@ -28,29 +22,29 @@ function CollectionChromeRenderSystem.draw(scene)
     local collection = scene.registry:resource("runState").collection
     local pageCount = math.max(1, math.ceil(#collection / view.pageSize))
 
-    love.graphics.clear(COLORS.desk)
-    love.graphics.setColor(COLORS.shelf)
+    love.graphics.clear(palette.black)
+    love.graphics.setColor(palette.red)
     love.graphics.rectangle("fill", 230, 0, Screen.w - 230, Screen.h)
 
-    love.graphics.setColor(COLORS.cream)
+    love.graphics.setColor(palette.beige)
     love.graphics.setFont(titleFont)
     love.graphics.print("RESPUESTAS", 14, 11)
 
     love.graphics.setFont(smallFont)
-    love.graphics.setColor(COLORS.faint)
+    love.graphics.setColor(palette.rose)
     love.graphics.print("lo que podrías decir", 15, 34)
     love.graphics.printf(("%02d CARTAS"):format(#collection),
         493, 17, 132, "right")
 
-    love.graphics.setColor(COLORS.cream[1], COLORS.cream[2], COLORS.cream[3], 0.18)
+    love.graphics.setColor(palette.beige)
     love.graphics.line(14, 53, 216, 53)
     love.graphics.line(230, 53, 626, 53)
 
-    love.graphics.setColor(COLORS.faint)
+    love.graphics.setColor(palette.beige)
     love.graphics.printf(("PÁGINA %d / %d"):format(view.page, pageCount),
         476, 371, 150, "right")
     love.graphics.print("FLECHAS recorrer · INICIO/FIN saltar · C volver", 244, 371)
-    love.graphics.setColor(1, 1, 1)
+    love.graphics.setColor(palette.beige)
 end
 
 return CollectionChromeRenderSystem
